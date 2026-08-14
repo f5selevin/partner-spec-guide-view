@@ -17,6 +17,8 @@ export type DocsManifest = {
 };
 
 const DOCS_ROOT = path.resolve(process.cwd(), "../docs");
+const metadataUrl =
+  process.env.METADATA_URL || "http://localhost:5123/metadata";
 const collator = new Intl.Collator(undefined, {
   numeric: true,
   sensitivity: "base",
@@ -105,13 +107,38 @@ export function flattenDocs(nodes: DocNode[]): DocNode[] {
     .filter((node) => node.sourcePath);
 }
 
+type LabMetadata = {
+  metadata?: {
+    petname?: string;
+  };
+};
+
+async function getNamespace() {
+  const response = await fetch(metadataUrl, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`Unable to load lab metadata: ${response.status}`);
+  }
+
+  const body = (await response.json()) as LabMetadata;
+  const namespace = body.metadata?.petname?.trim();
+  if (!namespace) {
+    throw new Error("Lab metadata does not contain metadata.petname");
+  }
+  return namespace;
+}
+
 export async function getDoc(slug: string[]) {
   const tree = await getDocTree();
   const node = flattenDocs(tree).find(
     (item) => item.slug.join("/") === slug.join("/"),
   );
   if (!node) return null;
-  return { ...node, source: await fs.readFile(node.sourcePath, "utf8") };
+
+  const [source, namespace] = await Promise.all([
+    fs.readFile(node.sourcePath, "utf8"),
+    getNamespace(),
+  ]);
+  return { ...node, source: source.replaceAll("$$namespace$$", namespace) };
 }
 
 export async function getAsset(relativePath: string) {

@@ -2,7 +2,7 @@
   "name": "rst-lab-docs",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node dev.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
