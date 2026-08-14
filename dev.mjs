@@ -11,20 +11,64 @@ const metadata = {
   petname: process.env.DEV_NAMESPACE || "local-pet",
 };
 
+const deployment = {
+  deployment: {
+    id: metadata.dep_id,
+    components: [
+      {
+        name: "Arcadia Crypto - Cluster",
+        accessMethods: {
+          https: [
+            {
+              host: "origin-1.example.test",
+              port: 443,
+              internalIp: "10.1.1.7",
+              internalPort: 5001,
+              parameters: { unauthenticated: true, ssl: false },
+              label: "Arcadia Crypto Origin Pool 1",
+            },
+            {
+              host: "origin-2.example.test",
+              port: 443,
+              internalIp: "10.1.1.7",
+              internalPort: 5002,
+              parameters: { unauthenticated: true, ssl: false },
+              label: "Arcadia Crypto Origin Pool 2",
+            },
+            {
+              host: "origin-3.example.test",
+              port: 443,
+              internalIp: "10.1.1.7",
+              internalPort: 5003,
+              parameters: { unauthenticated: true, ssl: false },
+              label: "Arcadia Crypto Origin Pool 3",
+            },
+          ],
+        },
+      },
+    ],
+  },
+};
+
 const metadataServer = createServer((request, response) => {
-  if (request.method !== "GET" || request.url !== "/metadata") {
+  const bodies = { "/metadata": metadata, "/deployment": deployment };
+  const body = bodies[request.url];
+  if (request.method !== "GET" || !body) {
     response.writeHead(404, { "Content-Type": "application/json" });
     response.end(JSON.stringify({ error: "Not found" }));
     return;
   }
 
-  response.writeHead(200, { "Content-Type": "application/json" });
-  response.end(JSON.stringify(metadata));
+  response.writeHead(200, {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  });
+  response.end(JSON.stringify(body));
 });
 
 metadataServer.listen(port, host, () => {
   console.log(
-    `Development metadata server: http://localhost:${port}/metadata (${metadata.petname})`,
+    `Development metadata server: http://localhost:${port}/metadata and /deployment (${metadata.petname})`,
   );
 });
 

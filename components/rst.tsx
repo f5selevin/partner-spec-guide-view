@@ -1,7 +1,8 @@
 import React from "react";
 import { cleanDocTitle, type DocNode } from "../lib/docs";
 import { ImagePreview } from "./image-preview";
-import { RstWidget } from "./rst-widgets";
+import type { PageHeading } from "./on-this-page";
+import { DeploymentAccessMethodLink, RstWidget } from "./rst-widgets";
 import { TocTree } from "./toctree";
 
 type Props = { source: string; slug: string[]; tree: DocNode[] };
@@ -12,6 +13,10 @@ function inline(text: string): React.ReactNode[] {
   return text.split(pattern).filter(Boolean).map((part, index) => {
     if (part.startsWith("**")) return <strong key={index}>{part.slice(2, -2)}</strong>;
     if (part.startsWith("``")) return <code key={index}>{part.slice(2, -2)}</code>;
+    const accessMethod = part.match(/^:deployment-access-method:`([^|`]+)\|([^`]+)`$/);
+    if (accessMethod) {
+      return <DeploymentAccessMethodLink key={index} deployment={accessMethod[1].trim()} label={accessMethod[2].trim()} />;
+    }
     const role = part.match(/^:[\w-]+:`(.+)`$/)?.[1];
     const link = role ?? part.match(/^`(.+)`_$/)?.[1];
     if (link) {
@@ -21,6 +26,28 @@ function inline(text: string): React.ReactNode[] {
     }
     return part;
   });
+}
+
+function headingId(label: string, used: Map<string, number>) {
+  const base = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "section";
+  const count = used.get(base) ?? 0;
+  used.set(base, count + 1);
+  return count ? `${base}-${count + 1}` : base;
+}
+
+export function getPageHeadings(source: string): PageHeading[] {
+  const lines = source.replace(/\r/g, "").split("\n");
+  const headings: PageHeading[] = [];
+  const used = new Map<string, number>();
+
+  for (let index = 0; index < lines.length - 1; index += 1) {
+    const label = cleanDocTitle(lines[index].trim());
+    const underline = lines[index + 1].trim();
+    if (label && underline.length >= label.length && underline[0] !== "#" && adornments.has(underline[0]) && [...underline].every((character) => character === underline[0])) {
+      headings.push({ id: headingId(label, used), label, level: 2 });
+    }
+  }
+  return headings;
 }
 
 function indent(line: string) { return line.match(/^ */)?.[0].length ?? 0; }
@@ -44,6 +71,7 @@ export function Rst({ source, slug, tree }: Props) {
   const output: React.ReactNode[] = [];
   let i = 0;
   let key = 0;
+  const usedHeadingIds = new Map<string, number>();
 
   while (i < lines.length) {
     const line = lines[i];
@@ -51,11 +79,13 @@ export function Rst({ source, slug, tree }: Props) {
     if (!line.trim()) { i += 1; continue; }
     if (line.trim() && next.length >= line.trim().length && adornments.has(next[0]) && [...next].every((c) => c === next[0])) {
       const level = next[0] === "#" ? 1 : 2;
+      const label = cleanDocTitle(line.trim());
+      const id = level === 2 ? headingId(label, usedHeadingIds) : undefined;
       output.push(
         React.createElement(
           `h${level}`,
-          { key: key++ },
-          inline(cleanDocTitle(line.trim())),
+          { id, key: key++ },
+          inline(label),
         ),
       );
       i += 2; continue;
