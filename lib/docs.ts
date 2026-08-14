@@ -30,16 +30,23 @@ function assertInsideDocs(candidate: string) {
     throw new Error("Invalid documentation path");
 }
 
+export function cleanDocTitle(title: string) {
+  return title.replace(/^(?:class|lab)\s+\d+\s*[-–—:]\s*/i, "").trim();
+}
+
 export function titleFromRst(source: string, fallback: string) {
   const lines = source.split(/\r?\n/);
   for (let index = 0; index < lines.length - 1; index += 1) {
     const title = lines[index].trim();
     const underline = lines[index + 1].trim();
-    if (title && /^([=\-`:'"~^_*+#<>])\1{2,}$/.test(underline)) return title;
+    if (title && /^([=\-`:'"~^_*+#<>])\1{2,}$/.test(underline))
+      return cleanDocTitle(title);
   }
-  return fallback
-    .replace(/[-_]+/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  return cleanDocTitle(
+    fallback
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, (letter) => letter.toUpperCase()),
+  );
 }
 
 async function walk(directory: string, segments: string[]): Promise<DocNode[]> {
@@ -108,9 +115,10 @@ export function flattenDocs(nodes: DocNode[]): DocNode[] {
 }
 
 type LabMetadata = {
-  metadata?: {
-    petname?: string;
-  };
+  dep_id?: string;
+  email?: string;
+  lab_id?: string;
+  petname?: string;
 };
 
 async function getNamespace() {
@@ -120,9 +128,9 @@ async function getNamespace() {
   }
 
   const body = (await response.json()) as LabMetadata;
-  const namespace = body.metadata?.petname?.trim();
+  const namespace = body.petname?.trim();
   if (!namespace) {
-    throw new Error("Lab metadata does not contain metadata.petname");
+    throw new Error("Lab metadata does not contain petname");
   }
   return namespace;
 }

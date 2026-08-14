@@ -1,5 +1,5 @@
 import React from "react";
-import type { DocNode } from "../lib/docs";
+import { cleanDocTitle, type DocNode } from "../lib/docs";
 import { ImagePreview } from "./image-preview";
 import { RstWidget } from "./rst-widgets";
 import { TocTree } from "./toctree";
@@ -50,8 +50,14 @@ export function Rst({ source, slug, tree }: Props) {
     const next = lines[i + 1]?.trim() ?? "";
     if (!line.trim()) { i += 1; continue; }
     if (line.trim() && next.length >= line.trim().length && adornments.has(next[0]) && [...next].every((c) => c === next[0])) {
-      const level = next[0] === "#" || next[0] === "=" ? 1 : 2;
-      output.push(React.createElement(`h${level}`, { key: key++ }, inline(line.trim())));
+      const level = next[0] === "#" ? 1 : 2;
+      output.push(
+        React.createElement(
+          `h${level}`,
+          { key: key++ },
+          inline(cleanDocTitle(line.trim())),
+        ),
+      );
       i += 2; continue;
     }
     const directive = line.match(/^\s*\.\.\s+([\w-]+)::\s*(.*)$/);
@@ -104,7 +110,8 @@ export function Rst({ source, slug, tree }: Props) {
         items.push(item[1]); i += 1;
       }
       const List = ordered ? "ol" : "ul";
-      output.push(<List key={key++}>{items.map((item) => <li key={item}>{inline(item)}</li>)}</List>); continue;
+      const listProps = ordered && list[1] ? { start: Number(list[1]) } : {};
+      output.push(<List key={key++} {...listProps}>{items.map((item) => <li key={item}>{inline(item)}</li>)}</List>); continue;
     }
     const paragraph = [line.trim()];
     i += 1;

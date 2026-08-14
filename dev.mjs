@@ -5,9 +5,10 @@ import { fileURLToPath } from "node:url";
 const host = "127.0.0.1";
 const port = 5123;
 const metadata = {
-  metadata: {
-    petname: process.env.DEV_NAMESPACE || "local-dev",
-  },
+  dep_id: process.env.DEV_DEP_ID || "a0768d25-ff37-4146-93a7-4f07ca3e1a86",
+  email: process.env.DEV_EMAIL || "local@local.tld",
+  lab_id: process.env.DEV_LAB_ID || "d4e9e425",
+  petname: process.env.DEV_NAMESPACE || "local-pet",
 };
 
 const metadataServer = createServer((request, response) => {
@@ -23,7 +24,7 @@ const metadataServer = createServer((request, response) => {
 
 metadataServer.listen(port, host, () => {
   console.log(
-    `Development metadata server: http://localhost:${port}/metadata (${metadata.metadata.petname})`,
+    `Development metadata server: http://localhost:${port}/metadata (${metadata.petname})`,
   );
 });
 
