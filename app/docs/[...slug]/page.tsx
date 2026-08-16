@@ -27,7 +27,7 @@ export default async function DocPage({ params }: Props) {
   const headings = getPageHeadings(doc.source);
   return (
     <Shell manifest={manifest} tree={tree} active={slug.join("/")}>
-      <div className="document-layout">
+      <div className={`document-layout${headings.length ? "" : " without-on-this-page"}`}>
         <article className="document">
           <Rst source={doc.source} slug={slug} tree={tree} />
           <PageNavigation previous={pages[currentIndex - 1]} next={pages[currentIndex + 1]} />

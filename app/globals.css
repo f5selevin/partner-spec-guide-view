@@ -137,6 +137,11 @@ main {
   margin: 0 auto;
 }
 
+.document-layout.without-on-this-page {
+  display: block;
+  width: min(100% - 64px, 900px);
+}
+
 .document {
   min-width: 0;
   padding: 54px 0 90px;
