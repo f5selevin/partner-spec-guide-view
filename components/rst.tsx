@@ -2,7 +2,7 @@ import React from "react";
 import { cleanDocTitle, type DocNode } from "../lib/docs";
 import { ImagePreview } from "./image-preview";
 import type { PageHeading } from "./on-this-page";
-import { DeploymentAccessMethodLink, RstWidget } from "./rst-widgets";
+import { DeploymentAccessMethodLink, DeploymentAccessMethodUrl, RstWidget } from "./rst-widgets";
 import { TocTree } from "./toctree";
 
 type Props = { source: string; slug: string[]; tree: DocNode[] };
@@ -13,6 +13,10 @@ function inline(text: string): React.ReactNode[] {
   return text.split(pattern).filter(Boolean).map((part, index) => {
     if (part.startsWith("**")) return <strong key={index}>{part.slice(2, -2)}</strong>;
     if (part.startsWith("``")) return <code key={index}>{part.slice(2, -2)}</code>;
+    const accessMethodUrl = part.match(/^:deployment-access-method-url:`([^|`]+)\|([^`]+)`$/);
+    if (accessMethodUrl) {
+      return <DeploymentAccessMethodUrl key={index} deployment={accessMethodUrl[1].trim()} label={accessMethodUrl[2].trim()} />;
+    }
     const accessMethod = part.match(/^:deployment-access-method:`([^|`]+)\|([^`]+)`$/);
     if (accessMethod) {
       return <DeploymentAccessMethodLink key={index} deployment={accessMethod[1].trim()} label={accessMethod[2].trim()} />;

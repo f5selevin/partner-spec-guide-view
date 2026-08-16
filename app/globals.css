@@ -353,7 +353,7 @@ th {
   border-radius: 3px;
 }
 
-.admonition strong:first-child {
+.admonition>strong:first-child {
   display: block;
   margin-bottom: 4px;
   text-transform: capitalize;

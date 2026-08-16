@@ -92,6 +92,16 @@ The block control is also available when inline placement is not required:
    :access-method: Arcadia Crypto Origin Pool 1
 ```
 
+### DeploymentAccessMethodUrl
+
+Displays only the access method's FQDN, without a protocol or port:
+
+```rst
+:deployment-access-method-url:`Arcadia Crypto - Cluster|Arcadia Crypto Origin Pool 1`
+```
+
+For example, an HTTPS access method with host `origin-1.example.test` displays `origin-1.example.test`, not `https://origin-1.example.test`. If metadata or the requested method cannot be loaded, the access-method label remains visible.
+
 ### Clock
 
 Displays the browser's current local date and time and refreshes it at the specified interval in milliseconds. The default interval is `1000`.

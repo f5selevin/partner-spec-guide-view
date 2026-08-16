@@ -32,17 +32,29 @@ function methodUrl(method: AccessMethod & { protocol: string }) {
   return `${method.protocol}://${method.host}${method.port === 443 || method.port === 80 ? "" : `:${method.port}`}`;
 }
 
+async function findAccessMethod(deployment: string, label: string) {
+  const data = await getDeployment();
+  const component = data.deployment?.components?.find(({ name }) => name === deployment);
+  return Object.entries(component?.accessMethods ?? {}).flatMap(
+    ([protocol, methods]) => methods.map((item) => ({ ...item, protocol })),
+  ).find((item) => item.label === label);
+}
+
 export async function DeploymentAccessMethodLink({ deployment, label }: { deployment: string; label: string }) {
   try {
-    const data = await getDeployment();
-    const component = data.deployment?.components?.find(({ name }) => name === deployment);
-    const method = Object.entries(component?.accessMethods ?? {}).flatMap(
-      ([protocol, methods]) => methods.map((item) => ({ ...item, protocol })),
-    ).find((item) => item.label === label);
-
+    const method = await findAccessMethod(deployment, label);
     return method
       ? <a href={methodUrl(method)} target="_blank" rel="noreferrer">{label}</a>
       : <>{label}</>;
+  } catch {
+    return <>{label}</>;
+  }
+}
+
+export async function DeploymentAccessMethodUrl({ deployment, label }: { deployment: string; label: string }) {
+  try {
+    const method = await findAccessMethod(deployment, label);
+    return <>{method?.host ?? label}</>;
   } catch {
     return <>{label}</>;
   }
