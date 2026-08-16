@@ -39,6 +39,12 @@ function headingId(label: string, used: Map<string, number>) {
   return count ? `${base}-${count + 1}` : base;
 }
 
+function headingLevel(adornment: string) {
+  if (adornment === "#") return 1;
+  if (adornment === "-") return 3;
+  return 2;
+}
+
 export function getPageHeadings(source: string): PageHeading[] {
   const lines = source.replace(/\r/g, "").split("\n");
   const headings: PageHeading[] = [];
@@ -48,7 +54,7 @@ export function getPageHeadings(source: string): PageHeading[] {
     const label = cleanDocTitle(lines[index].trim());
     const underline = lines[index + 1].trim();
     if (label && underline.length >= label.length && underline[0] !== "#" && adornments.has(underline[0]) && [...underline].every((character) => character === underline[0])) {
-      headings.push({ id: headingId(label, used), label, level: 2 });
+      headings.push({ id: headingId(label, used), label, level: headingLevel(underline[0]) });
     }
   }
   return headings;
@@ -82,9 +88,9 @@ export function Rst({ source, slug, tree }: Props) {
     const next = lines[i + 1]?.trim() ?? "";
     if (!line.trim()) { i += 1; continue; }
     if (line.trim() && next.length >= line.trim().length && adornments.has(next[0]) && [...next].every((c) => c === next[0])) {
-      const level = next[0] === "#" ? 1 : 2;
+      const level = headingLevel(next[0]);
       const label = cleanDocTitle(line.trim());
-      const id = level === 2 ? headingId(label, usedHeadingIds) : undefined;
+      const id = level > 1 ? headingId(label, usedHeadingIds) : undefined;
       output.push(
         React.createElement(
           `h${level}`,

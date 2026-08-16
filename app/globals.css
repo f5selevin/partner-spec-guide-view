@@ -187,7 +187,16 @@ main {
   text-decoration: none;
 }
 
-h2[id] {
+.on-this-page .heading-level-3 {
+  padding-left: 16px;
+}
+
+.on-this-page .heading-level-3 a {
+  font-size: 12px;
+}
+
+h2[id],
+h3[id] {
   scroll-margin-top: calc(var(--header-height) + 24px);
 }
 
