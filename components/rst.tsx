@@ -122,7 +122,7 @@ export function Rst({ source, slug, tree }: Props) {
         const options = Object.fromEntries(block.map((item) => item.trim().match(/^:([^:]+):\s*(.*)$/)).filter((item): item is RegExpMatchArray => Boolean(item)).map((item) => [item[1], item[2]]));
         output.push(<ImagePreview key={key++} src={assetPath(slug, argument.trim())} alt={options.alt || options.name || "Documentation image"} />); continue;
       }
-      if (["note", "warning", "tip", "important", "attention", "caution"].includes(name)) {
+      if (["note", "warning", "tip", "important", "attention", "caution", "danger"].includes(name)) {
         output.push(<aside key={key++} className={`admonition ${name}`}><strong>{name}</strong><p>{inline([argument, ...block].join(" ").trim())}</p></aside>); continue;
       }
       if (name === "react") {
