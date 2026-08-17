@@ -76,6 +76,14 @@ async function DeploymentAccessMethods({ options, body }: Props) {
     component = data.deployment?.components?.find(({ name }) => name === deploymentName);
     if (!component) throw new Error(`component "${deploymentName}" was not found`);
   } catch (reason: unknown) {
+    console.error("Unable to display deployment access methods", {
+      deploymentUrl,
+      deploymentName,
+      requestedMethods,
+      nodeEnv: process.env.NODE_ENV,
+      error: reason,
+      cause: reason instanceof Error ? reason.cause : undefined,
+    });
     const error = reason instanceof Error ? reason.message : "unable to load deployment metadata";
     return <aside className="admonition warning">Unable to display access methods: {error}.</aside>;
   }
