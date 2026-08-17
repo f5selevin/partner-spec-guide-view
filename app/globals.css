@@ -70,6 +70,11 @@ header {
   height: 40px;
 }
 
+.menu-toggle,
+.menu-backdrop {
+  display: none;
+}
+
 .sidebar {
   position: sticky;
   top: var(--header-height);
@@ -537,16 +542,78 @@ p+ul.document-toctree {
   }
 
   header {
+    z-index: 30;
+    justify-content: space-between;
     height: var(--header-height);
+    padding: 0 18px;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu-toggle {
+    display: flex;
+    flex: 0 0 44px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    margin-left: 14px;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid rgb(255 255 255 / 45%);
+    border-radius: 5px;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+  }
+
+  .menu-toggle:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
   }
 
   .sidebar {
-    position: relative;
-    top: auto;
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    display: none;
     height: auto;
-    max-height: 42vh;
+    max-height: none;
+    padding-bottom: 40px;
     border-right: 0;
-    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar.sidebar-open {
+    display: block;
+  }
+
+  .menu-backdrop {
+    position: fixed;
+    inset: var(--header-height) 0 0;
+    z-index: 15;
+    display: block;
+    cursor: default;
+    background: rgb(0 0 0 / 35%);
+    border: 0;
   }
 
   .document-layout {

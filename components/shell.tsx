@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { DocNode, DocsManifest } from "../lib/docs";
 import { Navigation } from "./navigation";
 
@@ -11,6 +13,8 @@ type Props = {
 };
 
 export function Shell({ manifest, tree, active, children }: Props) {
+  const [navigationOpen, setNavigationOpen] = useState(false);
+
   return (
     <div className="site-shell">
       <header>
@@ -30,8 +34,37 @@ export function Shell({ manifest, tree, active, children }: Props) {
           </svg>
           <span>{manifest.title}</span>
         </Link>
+        <button
+          type="button"
+          className="menu-toggle"
+          aria-label="Toggle contents menu"
+          aria-controls="contents-navigation"
+          aria-expanded={navigationOpen}
+          onClick={() => setNavigationOpen((open) => !open)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </header>
-      <aside className="sidebar"><div className="sidebar-title">Contents</div><Navigation tree={tree} active={active} /></aside>
+      <aside
+        id="contents-navigation"
+        className={`sidebar${navigationOpen ? " sidebar-open" : ""}`}
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest("a")) setNavigationOpen(false);
+        }}
+      >
+        <div className="sidebar-title">Contents</div>
+        <Navigation tree={tree} active={active} />
+      </aside>
+      {navigationOpen && (
+        <button
+          type="button"
+          className="menu-backdrop"
+          aria-label="Close contents menu"
+          onClick={() => setNavigationOpen(false)}
+        />
+      )}
       <main>{children}</main>
     </div>
   );
