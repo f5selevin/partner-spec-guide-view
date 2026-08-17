@@ -1,5 +1,6 @@
 import React from "react";
 import { cleanDocTitle, type DocNode } from "../lib/docs";
+import { CodeBlock } from "./code-block";
 import { ImagePreview } from "./image-preview";
 import type { PageHeading } from "./on-this-page";
 import { DeploymentAccessMethodLink, DeploymentAccessMethodUrl, RstWidget } from "./rst-widgets";
@@ -136,7 +137,7 @@ export function Rst({ source, slug, tree }: Props) {
       if (name === "code-block" || name === "code") {
         const code = block.filter((item) => !item.trim().startsWith(":"));
         const padding = Math.min(...code.filter((item) => item.trim()).map(indent));
-        output.push(<pre key={key++}><code>{code.map((item) => item.slice(padding)).join("\n")}</code></pre>); continue;
+        output.push(<CodeBlock key={key++}>{code.map((item) => item.slice(padding)).join("\n")}</CodeBlock>); continue;
       }
       continue;
     }

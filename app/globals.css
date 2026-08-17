@@ -335,6 +335,34 @@ pre code {
   background: none;
 }
 
+.code-block {
+  position: relative;
+}
+
+.code-copy-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: #e7edf3;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  background: #3b4652;
+  border: 1px solid #647180;
+  border-radius: 4px;
+}
+
+.code-copy-button:hover {
+  background: #4a5663;
+}
+
+.code-copy-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
 .table-wrap {
   max-width: 100%;
   margin: 24px 0;
