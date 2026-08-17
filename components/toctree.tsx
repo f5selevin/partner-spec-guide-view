@@ -21,8 +21,40 @@ function resolvePattern(pageSlug: string[], pattern: string) {
 }
 
 function globRegex(pattern: string) {
-  const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`^${escaped.replaceAll("**", "§§").replaceAll("*", "[^/]*").replaceAll("§§", ".*")}$`);
+  let expression = "";
+
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index];
+    if (character === "*") {
+      if (pattern[index + 1] === "*") {
+        expression += ".*";
+        index += 1;
+      } else {
+        expression += "[^/]*";
+      }
+      continue;
+    }
+    if (character === "?") {
+      expression += "[^/]";
+      continue;
+    }
+    if (character === "[") {
+      const closingBracket = pattern.indexOf("]", index + 1);
+      if (closingBracket !== -1) {
+        const characterClass = pattern.slice(index + 1, closingBracket);
+        const negated = characterClass.startsWith("!");
+        const contents = (negated ? characterClass.slice(1) : characterClass)
+          .replaceAll("\\", "\\\\")
+          .replaceAll("^", "\\^");
+        expression += `[${negated ? "^" : ""}${contents}]`;
+        index = closingBracket;
+        continue;
+      }
+    }
+    expression += character.replace(/[.+^${}()|[\]\\]/g, "\\$&");
+  }
+
+  return new RegExp(`^${expression}$`);
 }
 
 export function TocTree({ lines, pageSlug, tree }: Props) {
