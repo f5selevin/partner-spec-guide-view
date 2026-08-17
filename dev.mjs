@@ -25,7 +25,7 @@ const deployment = {
               internalIp: "10.1.1.7",
               internalPort: 5001,
               parameters: { unauthenticated: true, ssl: false },
-              label: "Arcadia Crypto Origin Pool 1",
+              label: "Arcadia Origin Pool 1",
             },
             {
               host: "origin-2.example.test",
@@ -33,7 +33,7 @@ const deployment = {
               internalIp: "10.1.1.7",
               internalPort: 5002,
               parameters: { unauthenticated: true, ssl: false },
-              label: "Arcadia Crypto Origin Pool 2",
+              label: "Arcadia Origin Pool 2",
             },
             {
               host: "origin-3.example.test",
@@ -41,7 +41,7 @@ const deployment = {
               internalIp: "10.1.1.7",
               internalPort: 5003,
               parameters: { unauthenticated: true, ssl: false },
-              label: "Arcadia Crypto Origin Pool 3",
+              label: "Arcadia Origin Pool 3",
             },
           ],
         },

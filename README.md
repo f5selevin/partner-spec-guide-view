@@ -42,7 +42,7 @@ Displays a table containing:
 ```rst
 .. react:: DeploymentAccessMethods
    :deployment: Arcadia Crypto - Cluster
-   :access-methods: Arcadia Crypto Origin Pool 1, Arcadia Crypto Origin Pool 2, Arcadia Crypto Origin Pool 3
+   :access-methods: Arcadia Origin Pool 1, Arcadia Origin Pool 2, Arcadia Origin Pool 3
 ```
 
 Options:
@@ -58,9 +58,9 @@ The access methods may instead be supplied as directive body lines:
 .. react:: DeploymentAccessMethods
    :deployment: Arcadia Crypto - Cluster
 
-   Arcadia Crypto Origin Pool 1
-   Arcadia Crypto Origin Pool 2
-   Arcadia Crypto Origin Pool 3
+   Arcadia Origin Pool 1
+   Arcadia Origin Pool 2
+   Arcadia Origin Pool 3
 ```
 
 The control searches all protocol groups under the matching component's `accessMethods` object. For example, an item under `https` with host `example.test` and port `443` produces `https://example.test`. Non-default ports are included in the URL.
@@ -79,7 +79,7 @@ Displays one deployment access method as an inline link. Only the access-method 
 Use the inline role inside a sentence:
 
 ```rst
-Open :deployment-access-method:`Arcadia Crypto - Cluster|Arcadia Crypto Origin Pool 1` in a new browser tab.
+Open :deployment-access-method:`Arcadia Crypto - Cluster|Arcadia Origin Pool 1` in a new browser tab.
 ```
 
 The value before `|` is the exact component name, and the value after it is the exact access-method label. If metadata or the requested method cannot be loaded, the title remains visible as plain text.
@@ -89,7 +89,7 @@ The block control is also available when inline placement is not required:
 ```rst
 .. react:: DeploymentAccessMethodLink
    :deployment: Arcadia Crypto - Cluster
-   :access-method: Arcadia Crypto Origin Pool 1
+   :access-method: Arcadia Origin Pool 1
 ```
 
 ### DeploymentAccessMethodUrl
@@ -97,7 +97,7 @@ The block control is also available when inline placement is not required:
 Displays only the access method's FQDN, without a protocol or port:
 
 ```rst
-:deployment-access-method-url:`Arcadia Crypto - Cluster|Arcadia Crypto Origin Pool 1`
+:deployment-access-method-url:`Arcadia Crypto - Cluster|Arcadia Origin Pool 1`
 ```
 
 For example, an HTTPS access method with host `origin-1.example.test` displays `origin-1.example.test`, not `https://origin-1.example.test`. If metadata or the requested method cannot be loaded, the access-method label remains visible.
