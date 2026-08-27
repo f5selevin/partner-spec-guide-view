@@ -137,7 +137,7 @@ export function Rst({ source, slug, tree }: Props) {
       if (name === "code-block" || name === "code") {
         const code = block.filter((item) => !item.trim().startsWith(":"));
         const padding = Math.min(...code.filter((item) => item.trim()).map(indent));
-        output.push(<CodeBlock key={key++}>{code.map((item) => item.slice(padding)).join("\n")}</CodeBlock>); continue;
+        output.push(<CodeBlock key={key++} language={argument.trim()}>{code.map((item) => item.slice(padding)).join("\n")}</CodeBlock>); continue;
       }
       continue;
     }

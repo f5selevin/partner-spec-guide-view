@@ -344,6 +344,71 @@ pre code {
   position: relative;
 }
 
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #93a1af;
+}
+
+.token.punctuation {
+  color: #d7dee7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #ff7b89;
+}
+
+.token.boolean,
+.token.number {
+  color: #cba6f7;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #a6e3a1;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.token.variable {
+  color: #89dceb;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: #f9e2af;
+}
+
+.token.keyword {
+  color: #89b4fa;
+}
+
+.token.regex,
+.token.important {
+  color: #fab387;
+}
+
+.token.important,
+.token.bold {
+  font-weight: 700;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
 .code-copy-button {
   position: absolute;
   top: 10px;

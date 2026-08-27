@@ -1,12 +1,41 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Prism from "prismjs";
+import "prismjs/components/prism-bash";
+import "prismjs/components/prism-css";
+import "prismjs/components/prism-docker";
+import "prismjs/components/prism-json";
+import "prismjs/components/prism-markup";
+import "prismjs/components/prism-python";
+import "prismjs/components/prism-sql";
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-yaml";
 
 type Props = {
   children: string;
+  language?: string;
 };
 
-export function CodeBlock({ children }: Props) {
+const languageAliases: Record<string, string> = {
+  console: "bash",
+  html: "markup",
+  js: "javascript",
+  none: "plain",
+  shell: "bash",
+  sh: "bash",
+  text: "plain",
+  ts: "typescript",
+  yml: "yaml",
+};
+
+export function CodeBlock({ children, language = "plain" }: Props) {
+  const requestedLanguage = language.toLowerCase();
+  const highlightedLanguage = languageAliases[requestedLanguage] ?? requestedLanguage;
+  const grammar = Prism.languages[highlightedLanguage];
+  const highlightedCode = grammar
+    ? Prism.highlight(children, grammar, highlightedLanguage)
+    : Prism.util.encode(children);
   const [copied, setCopied] = useState(false);
   const resetTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -38,11 +67,11 @@ export function CodeBlock({ children }: Props) {
   }
 
   return (
-    <pre className="code-block">
+    <pre className={`code-block language-${highlightedLanguage}`} data-language={requestedLanguage}>
       <button className="code-copy-button" type="button" onClick={copyCode} aria-label="Copy code to clipboard">
         {copied ? "Copied" : "Copy"}
       </button>
-      <code>{children}</code>
+      <code className={`language-${highlightedLanguage}`} dangerouslySetInnerHTML={{ __html: highlightedCode }} />
     </pre>
   );
 }
