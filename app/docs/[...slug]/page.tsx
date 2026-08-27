@@ -4,14 +4,20 @@ import { OnThisPage } from "../../../components/on-this-page";
 import { PageNavigation } from "../../../components/page-navigation";
 import { getPageHeadings, Rst } from "../../../components/rst";
 import { Shell } from "../../../components/shell";
-import { flattenDocs, getDoc, getDocsManifest, getDocTree } from "../../../lib/docs";
+import {
+  flattenDocs,
+  getDoc,
+  getDocsManifest,
+  getDocTitle,
+  getDocTree,
+} from "../../../lib/docs";
 
 type Props = { params: Promise<{ slug: string[] }> };
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const doc = await getDoc((await params).slug);
-  return { title: doc?.title ?? "Not found" };
+  const title = await getDocTitle((await params).slug);
+  return { title: title ?? "Not found" };
 }
 
 export default async function DocPage({ params }: Props) {

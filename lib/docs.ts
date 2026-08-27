@@ -122,7 +122,10 @@ type LabMetadata = {
 };
 
 async function getNamespace() {
-  const response = await fetch(metadataUrl, { cache: "no-store" });
+  const response = await fetch(metadataUrl, {
+    cache: "no-store",
+    signal: AbortSignal.timeout(5_000),
+  });
   if (!response.ok) {
     throw new Error(`Unable to load lab metadata: ${response.status}`);
   }
@@ -135,18 +138,35 @@ async function getNamespace() {
   return namespace;
 }
 
-export async function getDoc(slug: string[]) {
+async function findDoc(slug: string[]) {
   const tree = await getDocTree();
-  const node = flattenDocs(tree).find(
+  return flattenDocs(tree).find(
     (item) => item.slug.join("/") === slug.join("/"),
   );
+}
+
+export async function getDocTitle(slug: string[]) {
+  return (await findDoc(slug))?.title;
+}
+
+export async function getDoc(slug: string[]) {
+  const node = await findDoc(slug);
   if (!node) return null;
 
-  const [source, namespace] = await Promise.all([
-    fs.readFile(node.sourcePath, "utf8"),
-    getNamespace(),
-  ]);
-  return { ...node, source: source.replaceAll("$$namespace$$", namespace) };
+  let source = await fs.readFile(node.sourcePath, "utf8");
+  if (source.includes("$$namespace$$")) {
+    try {
+      const namespace = await getNamespace();
+      source = source.replaceAll("$$namespace$$", namespace);
+    } catch (error) {
+      console.error(
+        `Unable to substitute the lab namespace from ${metadataUrl}; rendering the document without substitution.`,
+        error,
+      );
+    }
+  }
+
+  return { ...node, source };
 }
 
 export async function getAsset(relativePath: string) {
