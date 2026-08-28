@@ -31,6 +31,33 @@ React controls use the custom `react` directive:
    :option: value
 ```
 
+### CodeGenerator
+
+Renders parameter inputs and a **Generate** button. After validation, it replaces
+`$$name$$` placeholders in the directive-body template and displays the
+result as a copyable code block.
+
+```rst
+.. react:: CodeGenerator
+   :language: console
+   :parameters: [{"name":"tenant","title":"XC tenant","default":"example","readonly":true},{"name":"expiry","title":"Expiry days","default":"1","type":"number"}]
+
+   curl "https://$$tenant$$.example.test/$$namespace$$?expiry=$$expiry$$"
+```
+
+The `parameters` option is a JSON array. Each item accepts `name`, `title`,
+`default`, `placeholder`, `type` (`text`, `password`, or `number`), `required`,
+and `readonly`. A read-only parameter is hidden from the input section but
+still participates in template substitution using its default value. Parameters are required unless
+`required` is `false`. The template is supplied as the directive body and
+retains its multiline indentation.
+
+`$$namespace$$` is always available without declaring a field. The misspelled
+`$$namepsace$$` is supported as a compatibility alias. Their value is the lab
+metadata `petname`; in development it comes from
+`http://localhost:5123/metadata`, and in production from
+`http://metadata.udf/metadata`.
+
 ### DeploymentAccessMethods
 
 Displays a table containing:

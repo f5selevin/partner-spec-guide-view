@@ -1,6 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
+import { CodeGenerator, type CodeGeneratorParameter } from "./code-generator";
 import { Clock, LocalStorageValue } from "./rst-client-widgets";
 
 type Props = { options: Record<string, string>; body: string };
@@ -18,9 +19,16 @@ type DeploymentResponse = {
   deployment?: { components?: DeploymentComponent[] };
 };
 
-const deploymentUrl = process.env.NODE_ENV === "development"
-  ? "http://localhost:5123/deployment"
-  : "http://metadata.udf/deployment";
+const metadataBaseUrl = process.env.NODE_ENV === "development"
+  ? "http://localhost:5123"
+  : "http://metadata.udf";
+const deploymentUrl = `${metadataBaseUrl}/deployment`;
+
+const getMetadata = cache(async () => {
+  const response = await fetch(`${metadataBaseUrl}/metadata`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`metadata service returned ${response.status}`);
+  return response.json() as Promise<{ petname?: string }>;
+});
 
 const getDeployment = cache(async () => {
   const response = await fetch(deploymentUrl, { cache: "no-store" });
@@ -114,7 +122,47 @@ async function DeploymentAccessMethods({ options, body }: Props) {
   );
 }
 
+async function TemplateCodeGenerator({ options, body }: Props) {
+  let parameters: CodeGeneratorParameter[];
+  try {
+    const parsed: unknown = JSON.parse(options.parameters ?? "[]");
+    if (!Array.isArray(parsed)) throw new Error("parameters must be an array");
+    parameters = parsed.map((parameter) => {
+      if (!parameter || typeof parameter !== "object") throw new Error("each parameter must be an object");
+      const item = parameter as Partial<CodeGeneratorParameter>;
+      if (!item.name || !item.title || !/^[A-Za-z][\w-]*$/.test(item.name)) {
+        throw new Error("each parameter requires a valid name and title");
+      }
+      return item as CodeGeneratorParameter;
+    });
+  } catch (reason) {
+    const error = reason instanceof Error ? reason.message : "invalid parameters";
+    return <aside className="admonition warning">CodeGenerator configuration error: {error}.</aside>;
+  }
+
+  if (!body.trim()) {
+    return <aside className="admonition warning">CodeGenerator requires a template in its directive body.</aside>;
+  }
+
+  let namespace = "";
+  try {
+    namespace = (await getMetadata()).petname?.trim() ?? "";
+  } catch (reason) {
+    console.error("Unable to load the default CodeGenerator namespace", reason);
+  }
+
+  return (
+    <CodeGenerator
+      parameters={parameters}
+      template={body}
+      language={options.language ?? "console"}
+      defaults={{ namespace, namepsace: namespace }}
+    />
+  );
+}
+
 const widgets: Record<string, Widget> = {
+  CodeGenerator: TemplateCodeGenerator,
   DeploymentAccessMethods,
   DeploymentAccessMethodLink: ({ options, body }) => (
     <DeploymentAccessMethodLink

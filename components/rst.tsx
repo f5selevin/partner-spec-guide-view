@@ -127,11 +127,20 @@ export function Rst({ source, slug, tree }: Props) {
       }
       if (name === "react") {
         const options: Record<string, string> = {};
-        const body = block.filter((item) => {
-          const option = item.trim().match(/^:([^:]+):\s*(.*)$/);
-          if (option) options[option[1]] = option[2];
-          return !option;
-        }).map((item) => item.trim()).filter(Boolean).join("\n");
+        let bodyStart = 0;
+        while (bodyStart < block.length && !block[bodyStart].trim()) bodyStart += 1;
+        while (bodyStart < block.length) {
+          const option = block[bodyStart].trim().match(/^:([^:]+):\s*(.*)$/);
+          if (!option) break;
+          options[option[1]] = option[2];
+          bodyStart += 1;
+        }
+        while (bodyStart < block.length && !block[bodyStart].trim()) bodyStart += 1;
+        const bodyLines = block.slice(bodyStart);
+        while (bodyLines.length && !bodyLines.at(-1)?.trim()) bodyLines.pop();
+        const contentLines = bodyLines.filter((item) => item.trim());
+        const padding = contentLines.length ? Math.min(...contentLines.map(indent)) : 0;
+        const body = bodyLines.map((item) => item.slice(padding)).join("\n");
         output.push(<RstWidget key={key++} name={argument.trim()} options={options} body={body} />); continue;
       }
       if (name === "code-block" || name === "code") {

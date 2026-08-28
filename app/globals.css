@@ -502,6 +502,72 @@ th {
   border-radius: 5px;
 }
 
+.code-generator {
+  margin: 24px 0;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.code-generator-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.code-generator-fields label,
+.code-generator-fields span {
+  display: block;
+}
+
+.code-generator-fields span {
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.code-generator-fields input {
+  width: 100%;
+  padding: 9px 11px;
+  color: var(--foreground);
+  font: inherit;
+  background: white;
+  border: 1px solid #aeb7c2;
+  border-radius: 4px;
+}
+
+.code-generator-fields input:focus {
+  border-color: var(--link);
+  outline: 2px solid rgb(21 101 168 / 20%);
+}
+
+.code-generator-button {
+  padding: 9px 18px;
+  cursor: pointer;
+  color: white;
+  font: inherit;
+  font-weight: 650;
+  background: var(--brand);
+  border: 0;
+  border-radius: 4px;
+}
+
+.code-generator-button:hover {
+  background: var(--brand-dark);
+}
+
+.code-generator-error {
+  margin: 12px 0 0;
+  color: var(--brand-dark);
+  font-weight: 650;
+}
+
+.code-generator .code-block {
+  margin-bottom: 0;
+}
+
 .document-toctree {
   padding: 0;
   margin: 0 0 24px 0;
