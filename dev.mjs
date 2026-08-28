@@ -8,7 +8,7 @@ const metadata = {
   dep_id: process.env.DEV_DEP_ID || "a0768d25-ff37-4146-93a7-4f07ca3e1a86",
   email: process.env.DEV_EMAIL || "local@local.tld",
   lab_id: process.env.DEV_LAB_ID || "d4e9e425",
-  petname: process.env.DEV_NAMESPACE || "helped-quagga",
+  petname: process.env.DEV_NAMESPACE || "solid-newt",
 };
 
 const deployment = {
