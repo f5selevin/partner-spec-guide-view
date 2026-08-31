@@ -31,6 +31,19 @@ React controls use the custom `react` directive:
    :option: value
 ```
 
+### Download
+
+Displays a titled file-download control. The file path is resolved relative to the RST document, and the browser downloads the file using its original filename.
+
+```rst
+.. react:: Download
+   :path: ../../rsc/openbanking.json
+   :title: Arcadia Finance Open Banking API definition
+   :text: Download openbanking.json
+```
+
+All three options are required: `path` identifies a file under the docs directory, `title` labels the control, and `text` sets the download link text.
+
 ### CodeGenerator
 
 Renders parameter inputs and a **Generate** button. After validation, it replaces

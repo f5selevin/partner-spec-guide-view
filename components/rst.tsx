@@ -141,7 +141,7 @@ export function Rst({ source, slug, tree }: Props) {
         const contentLines = bodyLines.filter((item) => item.trim());
         const padding = contentLines.length ? Math.min(...contentLines.map(indent)) : 0;
         const body = bodyLines.map((item) => item.slice(padding)).join("\n");
-        output.push(<RstWidget key={key++} name={argument.trim()} options={options} body={body} />); continue;
+        output.push(<RstWidget key={key++} name={argument.trim()} options={options} body={body} slug={slug} />); continue;
       }
       if (name === "code-block" || name === "code") {
         const code = block.filter((item) => !item.trim().startsWith(":"));

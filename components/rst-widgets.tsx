@@ -4,7 +4,7 @@ import { cache } from "react";
 import { CodeGenerator, type CodeGeneratorParameter } from "./code-generator";
 import { Clock, LocalStorageValue } from "./rst-client-widgets";
 
-type Props = { options: Record<string, string>; body: string };
+type Props = { options: Record<string, string>; body: string; slug: string[] };
 type Widget = (props: Props) => React.ReactNode | Promise<React.ReactNode>;
 type AccessMethod = {
   host: string;
@@ -122,6 +122,32 @@ async function DeploymentAccessMethods({ options, body }: Props) {
   );
 }
 
+function assetPath(slug: string[], value: string) {
+  const segments = slug.slice(0, -1);
+  for (const part of value.replace(/^\.\//, "").split("/")) {
+    if (part === "..") segments.pop();
+    else if (part && part !== ".") segments.push(part);
+  }
+  return `/api/assets/${segments.map(encodeURIComponent).join("/")}`;
+}
+
+function Download({ options, slug }: Props) {
+  const path = options.path?.trim();
+  const title = options.title?.trim();
+  const text = options.text?.trim();
+  if (!path || !title || !text) {
+    return <aside className="admonition warning">Download requires path, title, and text.</aside>;
+  }
+
+  const filename = path.split("/").filter(Boolean).at(-1);
+  return (
+    <section className="download-control">
+      <strong>{title}</strong>
+      <a href={assetPath(slug, path)} download={filename}>{text}</a>
+    </section>
+  );
+}
+
 async function TemplateCodeGenerator({ options, body }: Props) {
   let parameters: CodeGeneratorParameter[];
   try {
@@ -163,6 +189,7 @@ async function TemplateCodeGenerator({ options, body }: Props) {
 
 const widgets: Record<string, Widget> = {
   CodeGenerator: TemplateCodeGenerator,
+  Download,
   DeploymentAccessMethods,
   DeploymentAccessMethodLink: ({ options, body }) => (
     <DeploymentAccessMethodLink
