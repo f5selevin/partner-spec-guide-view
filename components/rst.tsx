@@ -155,9 +155,17 @@ export function Rst({ source, slug, tree }: Props) {
       const ordered = Boolean(list[1]);
       const items: string[] = [];
       while (i < lines.length) {
-        const item = lines[i].match(/^\s*(?:[-*+] |(?:\d+)[.)] )(.*)$/);
+        const itemLine = lines[i];
+        const item = itemLine.match(/^\s*(?:[-*+] |(?:\d+)[.)] )(.*)$/);
         if (!item) break;
-        items.push(item[1]); i += 1;
+        const itemIndent = indent(itemLine);
+        const itemText = [item[1]];
+        i += 1;
+        while (i < lines.length && lines[i].trim() && indent(lines[i]) > itemIndent && !lines[i].match(/^\s*(?:[-*+] |\d+[.)] )/)) {
+          itemText.push(lines[i].trim());
+          i += 1;
+        }
+        items.push(itemText.join(" "));
       }
       const List = ordered ? "ol" : "ul";
       const listProps = ordered && list[1] ? { start: Number(list[1]) } : {};
