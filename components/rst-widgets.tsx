@@ -22,10 +22,11 @@ type DeploymentResponse = {
 const metadataBaseUrl = process.env.NODE_ENV === "development"
   ? "http://localhost:5123"
   : "http://metadata.udf";
-const deploymentUrl = `${metadataBaseUrl}/deployment`;
+const metadataUrl = process.env.METADATA_URL || `${metadataBaseUrl}/metadata`;
+const deploymentUrl = process.env.DEPLOYMENT_URL || `${metadataBaseUrl}/deployment`;
 
 const getMetadata = cache(async () => {
-  const response = await fetch(`${metadataBaseUrl}/metadata`, { cache: "no-store" });
+  const response = await fetch(metadataUrl, { cache: "no-store" });
   if (!response.ok) throw new Error(`metadata service returned ${response.status}`);
   return response.json() as Promise<{ petname?: string }>;
 });
