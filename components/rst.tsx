@@ -161,7 +161,13 @@ export function Rst({ source, slug, tree }: Props) {
         const itemIndent = indent(itemLine);
         const itemText = [item[1]];
         i += 1;
-        while (i < lines.length && lines[i].trim() && indent(lines[i]) > itemIndent && !lines[i].match(/^\s*(?:[-*+] |\d+[.)] )/)) {
+        while (
+          i < lines.length
+          && lines[i].trim()
+          && indent(lines[i]) > itemIndent
+          && !lines[i].match(/^\s*(?:[-*+] |\d+[.)] )/)
+          && !lines[i].match(/^\s*\.\.\s+/)
+        ) {
           itemText.push(lines[i].trim());
           i += 1;
         }
